@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine?</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      text-align: center;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    h1 { margin-top: 0; color: #ff4d6d; }
+    p { color: #444; }
+    button {
+      border: none;
+      padding: 0.8rem 1.4rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 0.5rem;
+      transition: transform 0.2s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+      position: relative;
+    }
+    button:hover {
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    .yes { background: #ff4d6d; color: white; }
+    .no { background: #eee; color: #333; }
+
+    /* Secret section */
+    .secret {
+      display: none;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px dashed #ddd;
+    }
+    .secret h2 { color: #ff4d6d; }
+    .hint {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 1rem;
+    }
+
+    .secret-icon {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .secret-icon:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="secret-icon" id="secretIcon" title="psst…">❤️</div>
+    <h1 id="title">💖 Be my Valentine?</h1>
+    <p>I was wondering if you'd make this day a little more special with me.</p>
+
+    <button class="yes" id="yesBtn" onclick="sayYes()">Yes 💕</button>
+    <button class="no" id="noBtn" onclick="sayNo()">No 🙈</button>
+
+    <div class="secret" id="secret">
+      <h2>Okay… one more thing </h2>
+      <p>Would you like to be my girlfriend?</p>
+      <button class="yes" onclick="girlfriendYes()">Yes 💍</button>
+      <button class="no" onclick="girlfriendNo()">Let’s take it slow 🙂</button>
+    </div>
+
+    <div class="hint">psst… double‑click the heart</div>
+  </div>
+
+  <script>
+    // =====================
+    // State
+    // =====================
+    let yesScale = 1;
+    let noScale = 1;
+
+    // =====================
+    // Core actions
+    // =====================
+    function sayYes() {
+      alert('Yay! 💘 You just made my day.');
+    }
+
+    function sayNo() {
+      // Grow YES buttons
+      yesScale += 0.2;
+      document.querySelectorAll('.yes').forEach(btn => {
+        btn.style.transform = `scale(${yesScale})`;
+      });
+
+      // Shrink & fade NO button
+      noScale -= 0.15;
+      const noBtn = document.getElementById('noBtn');
+      noBtn.style.transform = `scale(${Math.max(noScale, 0.4)})`;
+      noBtn.style.opacity = Math.max(noScale, 0.3);
+    }
+
+    function girlfriendYes() {
+      alert('Best answer ever 🥹❤️');
+    }
+
+    function girlfriendNo() {
+      alert('That’s okay — honesty is cute too 🌱');
+    }
+
+    // =====================
+    // =====================
+    // Secret reveal
+    // =====================
+    document.getElementById('title').addEventListener('dblclick', () => {
+      document.getElementById('secret').style.display = 'block';
+    });
+
+    document.getElementById('secretIcon').addEventListener('click', () => {
+      document.getElementById('secret').style.display = 'block';
+    });
+
+    // =====================
+    // Desktop cursor follow
+    // =====================
+    document.addEventListener('mousemove', (e) => {
+      const yesBtn = document.getElementById('yesBtn');
+      if (!yesBtn) return;
+
+      const rect = yesBtn.getBoundingClientRect();
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+
+      yesBtn.style.transform = `translate(${dx * 0.02}px, ${dy * 0.02}px) scale(${yesScale})`;
+    });
+
+    // =====================
+    // Mobile touch follow
+    // =====================
+    document.addEventListener('touchmove', (e) => {
+      const yesBtn = document.getElementById('yesBtn');
+      if (!yesBtn || !e.touches.length) return;
+
+      const touch = e.touches[0];
+      const rect = yesBtn.getBoundingClientRect();
+      const dx = touch.clientX - (rect.left + rect.width / 2);
+      const dy = touch.clientY - (rect.top + rect.height / 2);
+
+      yesBtn.style.transform = `translate(${dx * 0.015}px, ${dy * 0.015}px) scale(${yesScale})`;
+    }, { passive: true });
+
+    // =====================
+    // Basic runtime tests
+    // =====================
+    console.assert(typeof sayNo === 'function', 'sayNo should be defined');
+    console.assert(typeof sayYes === 'function', 'sayYes should be defined');
+    console.assert(document.getElementById('yesBtn'), 'yesBtn should exist');
+    console.assert(document.getElementById('noBtn'), 'noBtn should exist');
+  </script>
+</body>
+</html>
